@@ -302,6 +302,37 @@ while [ "$1" != "" ]; do
         export BAZEL_USE_CPP_ONLY_TOOLCHAIN=1
         export CC="$gpp"
         export CXX="$gpp"
+#   mimics the above gcc option, but uses the Luckfox toolchain
+    elif [ "$1" == "luckfox" ]; then
+        shift 1
+        gcc="/[path/to/toolchain]/luckfox-toolchain/arm-rockchip830-linux-uclibcgnueabihf/bin/arm-rockchip830-linux-uclibcgnueabihf-gcc-8.3.0"
+        gpp="/[path/to/toolchain]/luckfox-toolchain/arm-rockchip830-linux-uclibcgnueabihf/bin/arm-rockchip830-linux-uclibcgnueabihf-g++"
+        opts="$opts -DCMAKE_C_COMPILER=$gcc -DCMAKE_CXX_COMPILER=$gpp"
+        export BAZEL_USE_CPP_ONLY_TOOLCHAIN=1
+        export CC="$gpp"
+        export CXX="$gpp"
+#   additional way of specifying Luckfox toolchains or other gcc/gpp versions, inline
+    elif [ "$1" == "specify-gcc" ]; then
+        shift 1
+        if is_option "$1"; then
+            gcc=$(which $(compgen -c gcc- | grep "^gcc-[1-9][0-9]$" | sort | tail -n 1))
+        else
+            gcc="$1"
+            shift 1
+        fi
+        opts="$opts -DCMAKE_C_COMPILER=$gcc"
+        export CC="$gcc"
+    elif [ "$1" == "specify-gpp" ]; then
+        shift 1
+        if is_option "$1"; then
+            gpp=$(which $(compgen -c g++- | grep "^g++-[1-9][0-9]$" | sort | tail -n 1))
+        else
+            gpp="$1"
+            shift 1
+        fi
+        opts="$opts -DCMAKE_CXX_COMPILER=$gpp"
+        export BAZEL_USE_CPP_ONLY_TOOLCHAIN=1
+        export CXX="$gpp"
     elif [ "$1" == "doc" ]; then
         shift 1
         mkdoc

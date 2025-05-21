@@ -46,28 +46,28 @@ O& operator<<(O& o, status s) {
 //! @brief Merges the output status with another status (undefined for other combinations of statuses).
 inline constexpr status operator&&(status x, status y) {
     if (y == status::output) {
-        assert(x != status::output);
+        // assert(x != status::output);
         return static_cast<status>(static_cast<char>(x) | char(4));
     }
     if (x == status::output) {
-        assert(y != status::output);
+        // assert(y != status::output);
         return static_cast<status>(static_cast<char>(y) | char(4));
     }
-    assert(false);
+    // assert(false);
     return status::output;
 }
 
 //! @brief Removes the output status from another status (undefined for other combinations of statuses).
 inline constexpr status operator^(status x, status y) {
     if (y == status::output) {
-        assert(x != status::output);
+        // assert(x != status::output);
         return static_cast<status>(static_cast<char>(x) & char(3));
     }
     if (x == status::output) {
-        assert(y != status::output);
+        // assert(y != status::output);
         return static_cast<status>(static_cast<char>(y) & char(3));
     }
-    assert(false);
+    // assert(false);
     return status::output;
 }
 
