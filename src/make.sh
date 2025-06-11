@@ -13,6 +13,8 @@ function usage() {
     echo -e "    \033[1munix\033[0m:                            overrides the auto-detected cmake platform to unix"
     echo -e "    \033[1mwindows\033[0m:                         overrides the auto-detected cmake platform to windows"
     echo -e "    \033[1mbazel\033[0m:                           sets the build tool to bazel instead of cmake"
+    echo -e "    \033[1mspecify-gcc <full_path>\033[0m:         explicitly sets the full path to the gcc compiler"
+    echo -e "    \033[1mspecify-gpp <full_path>\033[0m:         explicitly sets the full path to the g++ compiler"
     echo -e "    \033[1mhere\033[0m:                            sets the bazel working directory here"
     echo -e "    \033[1mgcc\033[0m:                             sets the bazel compiler to gcc"
     echo
