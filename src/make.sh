@@ -273,13 +273,6 @@ function cmake_builderx() {
     reporter cmake --build ./bin/ $opt "$@"
 }
 
-function is_option() {
-    if [[ "$1" == -* && "$1" != / ]]; then
-        return 0
-    fi
-        return 1
-}
-
 function powerset() {
     first="$1"
     if [ "$first" == "" ]; then
@@ -313,23 +306,15 @@ while [ "$1" != "" ]; do
         export CXX="$gpp"
 #   select custom gcc/gpp versions, inline
     elif [ "$1" == "specify-gcc" ]; then
-        shift 1
-        #if is_option "$1"; then
-        #    gcc=$(which $(compgen -c gcc- | grep "^gcc-[1-9][0-9]$" | sort | tail -n 1))
-        #else
-            gcc="$1"
-            shift 1
-        #fi
+        shift 1 # skip option
+        gcc="$1"
+        shift 1 # skip path
         opts="$opts -DCMAKE_C_COMPILER=$gcc -DCMAKE_CROSSCOMPILING=true"
         export CC="$gcc"
     elif [ "$1" == "specify-gpp" ]; then
-        shift 1
-        #if is_option "$1"; then
-        #    gpp=$(which $(compgen -c g++- | grep "^g++-[1-9][0-9]$" | sort | tail -n 1))
-        #else
-            gpp="$1"
-            shift 1
-        #fi
+        shift 1 # skip option      
+        gpp="$1"
+        shift 1 # skip path
         opts="$opts -DCMAKE_CXX_COMPILER=$gpp -DCMAKE_CROSSCOMPILING=true"
         export BAZEL_USE_CPP_ONLY_TOOLCHAIN=1
         export CXX="$gpp"
