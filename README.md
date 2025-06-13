@@ -1,3 +1,14 @@
+# Changes from original FCPP Library:
+
+- Removed asserts from ```src/lib/coordination/basics.hpp```'s ```operator&&``` and ```operator^``` functions for gcc-8.3.0 compatibility
+- Changes to ```src/make.sh``` file:
+  - added ```luckfox``` option that uses a local gcc luckfox toolchain - its path needs to be added manually in order to work
+  - added ```specify-gcc``` and ```specify-gpp``` options to have the option to specify the respective paths inline while executing the make script, making it easy to use various toolchains for different cross-compilation needs
+
+What follows is the original README file.
+
+---
+
 # FCPP - FieldCalc++
 
 An efficient C++14 implementation of the [Exchange Calculus](https://drops.dagstuhl.de/opus/volltexte/2022/16248), for fast and effective simulation of pervasive computing scenarios, deployment on microcontroller architectures, and incremental processing of graph-based data.
