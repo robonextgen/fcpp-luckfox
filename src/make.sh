@@ -309,13 +309,13 @@ while [ "$1" != "" ]; do
         shift 1 # skip option
         gcc="$1"
         shift 1 # skip path
-        opts="$opts -DCMAKE_C_COMPILER=$gcc -DCMAKE_CROSSCOMPILING=true"
+        opts="$opts -DCMAKE_C_COMPILER=$gcc -DFCPP_IS_CROSS_COMPILING=true"
         export CC="$gcc"
     elif [ "$1" == "specify-gpp" ]; then
         shift 1 # skip option      
         gpp="$1"
         shift 1 # skip path
-        opts="$opts -DCMAKE_CXX_COMPILER=$gpp -DCMAKE_CROSSCOMPILING=true"
+        opts="$opts -DCMAKE_CXX_COMPILER=$gpp -DFCPP_IS_CROSS_COMPILING=true"
         export BAZEL_USE_CPP_ONLY_TOOLCHAIN=1
         export CXX="$gpp"
     elif [ "$1" == "doc" ]; then
