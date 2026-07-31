@@ -395,9 +395,17 @@ namespace details {
         return s;
     }
 
+    //! @brief Hash iterable containers with a fixed-width size prefix.
+    //!
+    //! Wire format (osstream/isstream) already uses portable variable-length sizes.
+    //! Hashing used to call `s.write(x.size())`, which embeds native `sizeof(size_t)`
+    //! (4 on 32-bit Luckfox, 8 on 64-bit kiosk). `spawn` then uses `hash_to<trace_t>(key)`
+    //! as the process stack index, so kiosk and robot wrote `nbr` exports into different
+    //! slots and never saw each other inside a process (see apLog2_P1_test2).
+    //! Always hash the size as uint64_t so 32-bit and 64-bit nodes agree.
     template <typename T, typename S>
     hstream& iterable_serialize(hstream& s, T& x, S, wrapper<void> = {}) {
-        s.write(x.size());
+        s.write(static_cast<uint64_t>(x.size()));
         for (auto& i : x) s & i;
         return s;
     }

@@ -10,6 +10,8 @@
 
 #include <cmath>
 
+#include <iomanip>
+#include <iostream>
 #include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
@@ -189,6 +191,7 @@ struct hardware_connector {
                 common::lock_guard<parallel> l(P::node::mutex);
                 fcpp::details::self(m_nbr_dist, m.device) = m.power;
                 fcpp::details::self(m_nbr_msg_size, m.device) = m.content.size();
+                size_t received_size = m.content.size();
                 common::isstream is(std::move(m.content));
                 typename F::node::message_t mt;
 #ifndef FCPP_DISABLE_EXCEPTIONS
@@ -197,8 +200,37 @@ struct hardware_connector {
                     is >> mt;
                     if (is.size() == 0)
                         P::node::as_final().receive(m.time, m.device, mt);
+                    else {
+                        // Residual bytes after a successful parse of message_t: dump them so we
+                        // can tell padding / schema drift / truncation apart (see residual=6).
+                        std::cerr << "FCPP-RX-REJECT partial device=" << m.device
+                                  << " size=" << received_size
+                                  << " residual=" << is.size()
+                                  << " tail_hex=";
+                        auto const& d = is.data();
+                        size_t rem = is.size();
+                        size_t start = d.size() - rem;
+                        size_t dump_n = rem < 32 ? rem : 32;
+                        std::cerr << std::hex << std::setfill('0');
+                        for (size_t i = 0; i < dump_n; ++i)
+                            std::cerr << std::setw(2)
+                                      << static_cast<unsigned>(
+                                             static_cast<unsigned char>(d[start + i]));
+                        std::cerr << std::dec << std::endl;
+                    }
 #ifndef FCPP_DISABLE_EXCEPTIONS
-                } catch (common::format_error&) {}
+                } catch (common::format_error&) {
+                    std::cerr << "FCPP-RX-REJECT format device=" << m.device
+                              << " size=" << received_size << " head_hex=";
+                    auto const& d = is.data();
+                    size_t dump_n = d.size() < 32 ? d.size() : 32;
+                    std::cerr << std::hex << std::setfill('0');
+                    for (size_t i = 0; i < dump_n; ++i)
+                        std::cerr << std::setw(2)
+                                  << static_cast<unsigned>(
+                                         static_cast<unsigned char>(d[i]));
+                    std::cerr << std::dec << std::endl;
+                }
 #endif
             }
 
